@@ -192,3 +192,16 @@ func (bot *Bot) Stop() {
 		bot.done <- struct{}{}
 	}
 }
+
+func (bot *Bot) AnswerCallback(upd *Update, text string, alert bool) error {
+	if _, err := bot.AnswerCallbackQuery(tgbotapi.CallbackConfig{
+		CallbackQueryID: upd.CallbackQuery.ID,
+		Text:            text,
+		ShowAlert:       alert,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
