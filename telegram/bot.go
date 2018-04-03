@@ -102,6 +102,18 @@ func NewBot(cfg *BotConfig, debug bool) (*Bot, error) {
 		bot.updates = bot.ListenForWebhook("/" + bot.Token)
 		go http.ListenAndServeTLS("0.0.0.0:8443", cfg.certPath, cfg.keyPath, nil)
 	} else {
+		info, err := bot.GetWebhookInfo()
+		if err != nil {
+			return nil, err
+		}
+
+		if info.IsSet() {
+			_, err = bot.RemoveWebhook()
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 60
 
