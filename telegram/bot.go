@@ -94,13 +94,13 @@ func NewBot(cfg *BotConfig, debug bool) (*Bot, error) {
 	}
 
 	if cfg.IsWebhook() {
-		_, err := bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://"+cfg.domain+"/"+bot.Token, cfg.certPath))
+		_, err := bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://"+cfg.domain+":8443/"+bot.Token, cfg.certPath))
 		if err != nil {
 			return nil, err
 		}
 
 		bot.updates = bot.ListenForWebhook("/" + bot.Token)
-		go http.ListenAndServeTLS("0.0.0.0", cfg.certPath, cfg.keyPath, nil)
+		go http.ListenAndServeTLS("0.0.0.0:8443", cfg.certPath, cfg.keyPath, nil)
 	} else {
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 60
