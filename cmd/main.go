@@ -7,7 +7,6 @@ import (
 	"os/signal"
 
 	tg "github.com/nuqz/tele-flunky/telegram"
-	"gopkg.in/telegram-bot-api.v4"
 )
 
 var (
@@ -35,12 +34,11 @@ func init() {
 }
 
 func main() {
-	bot.Command("authorize", tg.HandlerFunc(func(bot *tg.Bot, upd *tg.Update) {
-		log.Printf("%+v", upd)
-	}))
+	bot.Callback(HomeCallback, tg.HandlerFunc(homeCallback))
 
+	bot.Command(StartCommand, tg.HandlerFunc(startCommand))
 
-	bot.Serve()
+	bot.Serve(bot.DefaultHandler())
 
 	<-quit
 	bot.Stop()
