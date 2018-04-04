@@ -212,3 +212,40 @@ func (bot *Bot) AnswerCallback(upd *Update, text string, alert bool) error {
 	return nil
 }
 
+func (bot *Bot) UpdateCallbackQueryMessage(
+	upd *Update,
+	caption, text string,
+	markup *tgbotapi.InlineKeyboardMarkup,
+) error {
+	if caption != "" {
+		if _, err := bot.Send(tgbotapi.NewEditMessageCaption(
+			upd.CallbackQuery.Message.Chat.ID,
+			upd.CallbackQuery.Message.MessageID,
+			caption,
+		)); err != nil {
+			return err
+		}
+	}
+
+	if text != "" {
+		if _, err := bot.Send(tgbotapi.NewEditMessageText(
+			upd.CallbackQuery.Message.Chat.ID,
+			upd.CallbackQuery.Message.MessageID,
+			text,
+		)); err != nil {
+			return err
+		}
+	}
+
+	if markup != nil {
+		if _, err := bot.Send(tgbotapi.NewEditMessageReplyMarkup(
+			upd.CallbackQuery.Message.Chat.ID,
+			upd.CallbackQuery.Message.MessageID,
+			*markup,
+		)); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
