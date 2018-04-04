@@ -149,7 +149,29 @@ func (bot *Bot) Callback(name string, h Handler) { bot.callbacks[name] = h }
 func (bot *Bot) Command(name string, h Handler)  { bot.commands[name] = h }
 func (bot *Bot) Query(query string, h Handler)   { bot.queries[query] = h }
 
-func (bot *Bot) Serve() {
+func (bot *Bot) DefaultHandler() Handler {
+	return HandlerFunc(func(bot *Bot, upd *Update) error {
+		if h, ok := bot.commands[upd.Command()]; ok {
+			return h.HandleUpdate(bot, upd)
+		}
+
+		if h, ok := bot.queries[upd.Query()]; ok {
+			return h.HandleUpdate(bot, upd)
+		}
+
+		if h, ok := bot.callbacks[upd.Callback()]; ok {
+			return h.HandleUpdate(bot, upd)
+		}
+
+		if upd.Message != nil {
+			log.Println("Sorry, don't understand!")
+		}
+
+		return nil
+	})
+}
+
+func (bot *Bot) Serve(h Handler) {
 	if bot.done == nil {
 		bot.done = make(chan struct{}, numProcs)
 		updates := bot.Updates()
@@ -160,23 +182,8 @@ func (bot *Bot) Serve() {
 				for {
 					select {
 					case upd := <-updates:
-						if h, ok := bot.commands[upd.Command()]; ok {
-							h.HandleUpdate(bot, upd)
-							continue
-						}
-
-						if h, ok := bot.queries[upd.Query()]; ok {
-							h.HandleUpdate(bot, upd)
-							continue
-						}
-
-						if h, ok := bot.callbacks[upd.Callback()]; ok {
-							h.HandleUpdate(bot, upd)
-							continue
-						}
-
-						if upd.Message != nil {
-							log.Println("Sorry, don't understand!")
+						if err := h.HandleUpdate(bot, upd); err != nil {
+							log.Println(err)
 						}
 					case <-bot.done:
 						break eternity
