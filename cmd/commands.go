@@ -15,16 +15,14 @@ many fun things with my friends:
 😎 I'm very cool bot and 💖 u!`
 
 	startKeyboardMarkup = tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{
-				Text:         "Let's be friends 🤝",
-				CallbackData: &HomeCallback,
-			},
-			tgbotapi.InlineKeyboardButton{
-				Text:         "Let's be friends 🤝",
-				CallbackData: &HomeCallback,
-			},
-		),
+		tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
+			Text:         "Let's be friends 🤝",
+			CallbackData: &HomeCallback,
+		}),
+		tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
+			Text:         "Don't bother me 👽",
+			CallbackData: &UnknownCallback,
+		}),
 	)
 )
 
