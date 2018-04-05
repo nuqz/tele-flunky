@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/nuqz/tele-flunky/storage"
 	"gopkg.in/telegram-bot-api.v4"
 )
 
@@ -70,15 +71,18 @@ func (cfg *BotConfig) IsWebhook() bool { return cfg.domain != "" }
 type Bot struct {
 	*tgbotapi.BotAPI
 
+	config  *BotConfig
+	done    chan struct{}
+	updates tgbotapi.UpdatesChannel
+
 	callbacks map[string]Handler
 	commands  map[string]Handler
 	queries   map[string]Handler
-	config    *BotConfig
-	updates   tgbotapi.UpdatesChannel
-	done      chan struct{}
+
+	Storage storage.BotStorage
 }
 
-func NewBot(cfg *BotConfig, debug bool) (*Bot, error) {
+func NewBot(s storage.BotStorage, cfg *BotConfig, debug bool) (*Bot, error) {
 	tgBotAPI, err := tgbotapi.NewBotAPI(cfg.token)
 	if err != nil {
 		return nil, err
@@ -91,6 +95,8 @@ func NewBot(cfg *BotConfig, debug bool) (*Bot, error) {
 		callbacks: map[string]Handler{},
 		commands:  map[string]Handler{},
 		queries:   map[string]Handler{},
+
+		Storage: s,
 	}
 
 	if cfg.IsWebhook() {
@@ -125,13 +131,13 @@ func NewBot(cfg *BotConfig, debug bool) (*Bot, error) {
 	return bot, nil
 }
 
-func NewBotEnv(debug bool) (*Bot, error) {
+func NewBotEnv(s storage.BotStorage, debug bool) (*Bot, error) {
 	cfg, err := ConfigFromEnv()
 	if err != nil {
 		return nil, err
 	}
 
-	return NewBot(cfg, debug)
+	return NewBot(s, cfg, debug)
 }
 
 func (bot *Bot) Updates() <-chan *Update {
