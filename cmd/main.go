@@ -36,7 +36,7 @@ func init() {
 func main() {
 	bot.Callback(HomeCallback, tg.HandlerFunc(homeCallback))
 
-	bot.Command(StartCommand, tg.HandlerFunc(startCommand))
+	bot.Command(StartCommand, NewStartCommand())
 
 	bot.Serve(bot.DefaultHandler())
 
