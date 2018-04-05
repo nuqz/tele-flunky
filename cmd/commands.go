@@ -8,8 +8,7 @@ import (
 var (
 	StartCommand = "start"
 
-	Greeting = `️Hello, dear ✌ My name is Mr. Flunky and I am the bot. I can do
-many fun things with my friends:	
+	Greeting = `️Hello, dear ✌ My name is Mr. Flunky and I am the bot. I can do many fun things with my friends:	
 🎼 I like to listen music and you can share it with me.
 🎯 I follow the situation at the crypto exchange.
 😎 I'm very cool bot and 💖 u!`
