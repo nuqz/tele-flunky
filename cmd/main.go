@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/nuqz/tele-flunky/storage"
 	tg "github.com/nuqz/tele-flunky/telegram"
 )
 
@@ -25,7 +26,12 @@ func init() {
 		log.SetFlags(log.Ltime | log.Lshortfile)
 	}
 
-	if bot, err = tg.NewBotEnv(*debug); err != nil {
+	s, err := storage.NewLevelDBStorage(os.Getenv("TG_BOT_LEVELDB_PATH"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if bot, err = tg.NewBotEnv(s, *debug); err != nil {
 		log.Fatal(err)
 	}
 
