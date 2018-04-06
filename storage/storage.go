@@ -9,7 +9,7 @@ import (
 type UserStorage interface {
 	PutUser(*access.User) error
 	HasUser(*tgbotapi.User) (bool, error)
-	GetUser(*tgbotapi.User)
+	GetUser(*tgbotapi.User) (*access.User, error)
 	DeleteUser(*access.User) error
 }
 
