@@ -6,7 +6,8 @@ import (
 )
 
 var (
-	HomeCallback = "home"
+	HomeCallback    = "home"
+	UnknownCallback = "unknown"
 
 	x                  = "xs"
 	homeKeyboardMarkup = tgbotapi.NewInlineKeyboardMarkup(
