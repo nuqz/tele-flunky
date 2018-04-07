@@ -75,9 +75,9 @@ type Bot struct {
 	done    chan struct{}
 	updates tgbotapi.UpdatesChannel
 
-	callbacks map[string]Handler
-	commands  map[string]Handler
-	queries   map[string]Handler
+	cmds          map[string]Handler
+	cbQueries     map[string]Handler
+	inlineQueries map[string]Handler
 
 	Storage storage.BotStorage
 }
@@ -90,11 +90,13 @@ func NewBot(s storage.BotStorage, cfg *BotConfig, debug bool) (*Bot, error) {
 	tgBotAPI.Debug = debug
 
 	bot := &Bot{
-		BotAPI:    tgBotAPI,
-		config:    cfg,
-		callbacks: map[string]Handler{},
-		commands:  map[string]Handler{},
-		queries:   map[string]Handler{},
+		BotAPI: tgBotAPI,
+
+		config: cfg,
+
+		cmds:          map[string]Handler{},
+		cbQueries:     map[string]Handler{},
+		inlineQueries: map[string]Handler{},
 
 		Storage: s,
 	}
@@ -144,33 +146,29 @@ func (bot *Bot) Updates() <-chan *Update {
 	out := make(chan *Update)
 	go func() {
 		for upd := range bot.updates {
-			out <- &Update{&upd}
+			out <- NewUpdate(&upd)
 		}
 		close(out)
 	}()
 	return out
 }
 
-func (bot *Bot) Callback(name string, h Handler) { bot.callbacks[name] = h }
-func (bot *Bot) Command(name string, h Handler)  { bot.commands[name] = h }
-func (bot *Bot) Query(query string, h Handler)   { bot.queries[query] = h }
+func (bot *Bot) Command(name string, h Handler)       { bot.cmds[name] = h }
+func (bot *Bot) CallbackQuery(name string, h Handler) { bot.cbQueries[name] = h }
+func (bot *Bot) InlineQuery(query string, h Handler)  { bot.inlineQueries[query] = h }
 
 func (bot *Bot) DefaultHandler() Handler {
 	return HandlerFunc(func(bot *Bot, upd *Update) error {
-		if h, ok := bot.commands[upd.Command()]; ok {
+		if h, ok := bot.cmds[upd.Command()]; ok {
 			return h.HandleUpdate(bot, upd)
 		}
 
-		if h, ok := bot.queries[upd.Query()]; ok {
+		if h, ok := bot.inlineQueries[upd.InlineQuery()]; ok {
 			return h.HandleUpdate(bot, upd)
 		}
 
-		if h, ok := bot.callbacks[upd.Callback()]; ok {
+		if h, ok := bot.cbQueries[upd.CallbackQuery()]; ok {
 			return h.HandleUpdate(bot, upd)
-		}
-
-		if upd.Message != nil {
-			log.Println("Sorry, don't understand!")
 		}
 
 		return nil
@@ -208,7 +206,7 @@ func (bot *Bot) Stop() {
 
 func (bot *Bot) AnswerCallback(upd *Update, text string, alert bool) error {
 	if _, err := bot.AnswerCallbackQuery(tgbotapi.CallbackConfig{
-		CallbackQueryID: upd.CallbackQuery.ID,
+		CallbackQueryID: upd.Update.CallbackQuery.ID,
 		Text:            text,
 		ShowAlert:       alert,
 	}); err != nil {
@@ -225,8 +223,8 @@ func (bot *Bot) UpdateCallbackQueryMessage(
 ) error {
 	if caption != "" {
 		if _, err := bot.Send(tgbotapi.NewEditMessageCaption(
-			upd.CallbackQuery.Message.Chat.ID,
-			upd.CallbackQuery.Message.MessageID,
+			upd.Update.CallbackQuery.Message.Chat.ID,
+			upd.Update.CallbackQuery.Message.MessageID,
 			caption,
 		)); err != nil {
 			return err
@@ -235,8 +233,8 @@ func (bot *Bot) UpdateCallbackQueryMessage(
 
 	if text != "" {
 		if _, err := bot.Send(tgbotapi.NewEditMessageText(
-			upd.CallbackQuery.Message.Chat.ID,
-			upd.CallbackQuery.Message.MessageID,
+			upd.Update.CallbackQuery.Message.Chat.ID,
+			upd.Update.CallbackQuery.Message.MessageID,
 			text,
 		)); err != nil {
 			return err
@@ -245,8 +243,8 @@ func (bot *Bot) UpdateCallbackQueryMessage(
 
 	if markup != nil {
 		if _, err := bot.Send(tgbotapi.NewEditMessageReplyMarkup(
-			upd.CallbackQuery.Message.Chat.ID,
-			upd.CallbackQuery.Message.MessageID,
+			upd.Update.CallbackQuery.Message.Chat.ID,
+			upd.Update.CallbackQuery.Message.MessageID,
 			*markup,
 		)); err != nil {
 			return err

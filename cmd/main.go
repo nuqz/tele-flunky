@@ -40,9 +40,9 @@ func init() {
 }
 
 func main() {
-	bot.Callback(HomeCallback, tg.HandlerFunc(homeCallback))
-
 	bot.Command(StartCommand, NewStartCommand())
+
+	bot.CallbackQuery(HomeCallback, tg.HandlerFunc(homeCallback))
 
 	bot.Serve(bot.DefaultHandler())
 

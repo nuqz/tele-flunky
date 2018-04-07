@@ -6,32 +6,66 @@ import (
 
 type Update struct {
 	*tgbotapi.Update
+	user        *tgbotapi.User
+	chat        *tgbotapi.Chat
+	cmd         string
+	cmdArgs     string
+	cbQuery     string
+	inlineQuery string
 }
 
-func (upd *Update) Callback() string {
-	if upd.CallbackQuery != nil {
-		return upd.CallbackQuery.Data
+func updateFromMessage(update *Update, msg *tgbotapi.Message) {
+	update.user = msg.From
+	update.chat = msg.Chat
+	if msg.IsCommand() {
+		update.cmd = msg.Command()
+		update.cmdArgs = msg.CommandArguments()
 	}
-
-	return ""
 }
 
-func (upd *Update) Command() string {
+func updateFromCallbackQuery(update *Update, query *tgbotapi.CallbackQuery) {
+	update.user = query.From
+	update.chat = query.Message.Chat
+	update.cbQuery = query.Data
+}
+
+func updateFromInlineQuery(update *Update, query *tgbotapi.InlineQuery) {
+	update.user = query.From
+	update.inlineQuery = query.Query
+}
+
+func NewUpdate(upd *tgbotapi.Update) (update *Update) {
+	update = new(Update)
+	update.Update = upd
+
 	if upd.Message != nil {
-		return upd.Message.Command()
+		updateFromMessage(update, upd.Message)
+		return
 	}
 
 	if upd.EditedMessage != nil {
-		return upd.EditedMessage.Command()
+		updateFromMessage(update, upd.EditedMessage)
+		return
 	}
 
-	return ""
-}
+	if upd.CallbackQuery != nil {
+		updateFromCallbackQuery(update, upd.CallbackQuery)
+		return
+	}
 
-func (upd *Update) Query() string {
 	if upd.InlineQuery != nil {
-		return upd.InlineQuery.Query
+		updateFromInlineQuery(update, upd.InlineQuery)
 	}
 
-	return ""
+	return
 }
+
+func (upd *Update) IsCommand() bool       { return upd.cmd != "" }
+func (upd *Update) IsCallbackQuery() bool { return upd.cbQuery != "" }
+func (upd *Update) IsInlineQuery() bool   { return upd.inlineQuery != "" }
+func (upd *Update) User() *tgbotapi.User  { return upd.user }
+func (upd *Update) Chat() *tgbotapi.Chat  { return upd.chat }
+func (upd *Update) Command() string       { return upd.cmd }
+func (upd *Update) CommandArgs() string   { return upd.cmdArgs }
+func (upd *Update) CallbackQuery() string { return upd.cbQuery }
+func (upd *Update) InlineQuery() string   { return upd.inlineQuery }
