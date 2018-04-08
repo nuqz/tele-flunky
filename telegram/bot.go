@@ -78,6 +78,7 @@ type Bot struct {
 	cmds          map[string]Handler
 	cbQueries     map[string]Handler
 	inlineQueries map[string]Handler
+	messages      map[string]Handler
 
 	Storage storage.BotStorage
 }
@@ -97,6 +98,7 @@ func NewBot(s storage.BotStorage, cfg *BotConfig, debug bool) (*Bot, error) {
 		cmds:          map[string]Handler{},
 		cbQueries:     map[string]Handler{},
 		inlineQueries: map[string]Handler{},
+		messages:      map[string]Handler{},
 
 		Storage: s,
 	}
@@ -156,6 +158,7 @@ func (bot *Bot) Updates() <-chan *Update {
 func (bot *Bot) Command(name string, h Handler)       { bot.cmds[name] = h }
 func (bot *Bot) CallbackQuery(name string, h Handler) { bot.cbQueries[name] = h }
 func (bot *Bot) InlineQuery(query string, h Handler)  { bot.inlineQueries[query] = h }
+func (bot *Bot) Message(msg string, h Handler)        { bot.messages[msg] = h }
 
 func (bot *Bot) DefaultHandler() Handler {
 	return HandlerFunc(func(bot *Bot, upd *Update) error {
