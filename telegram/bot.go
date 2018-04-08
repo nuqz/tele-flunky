@@ -171,7 +171,15 @@ func (bot *Bot) DefaultHandler() Handler {
 			handler = h
 		} else if h, ok := bot.cbQueries[ctx.Update.CallbackQuery()]; ok {
 			handler = h
+		} else if !ctx.Update.IsInlineQuery() {
+			handlerName, err := bot.getUserNextChatMessageHandler(ctx)
+			if err != nil {
+				return err
+			}
 
+			if h, ok := bot.messages[handlerName]; ok {
+				handler = h
+			}
 		}
 
 		if handler != nil {
@@ -267,6 +275,20 @@ func (bot *Bot) UpdateCallbackQueryMessage(
 	}
 
 	return nil
+}
+
+func (bot *Bot) getUserNextChatMessageHandler(ctx *Context) (string, error) {
+	log.Printf("%+v", ctx.Update)
+	handlerName, err := bot.Storage.GetUserNextChatMessageHandler(
+		ctx.User,
+		ctx.Update.Chat().ID,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return handlerName, nil
 }
 
 func (bot *Bot) user(upd *Update) (*access.User, error) {

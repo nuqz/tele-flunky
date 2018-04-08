@@ -8,6 +8,7 @@ import (
 var (
 	HomeCallback    = "home"
 	UnknownCallback = "unknown"
+	StickerIDCallback = "sticker_id"
 
 	x                  = "xs"
 	homeKeyboardMarkup = tgbotapi.NewInlineKeyboardMarkup(
@@ -25,6 +26,10 @@ var (
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.InlineKeyboardButton{Text: "Delivery", CallbackData: &x},
+			tgbotapi.InlineKeyboardButton{
+				Text:         "I want to know Sticker ID",
+				CallbackData: &StickerIDCallback,
+			},
 		),
 	)
 )
@@ -37,13 +42,22 @@ var (
 func aloneCallback(ctx *tg.Context) error {
 func homeCallback(ctx *tg.Context) error {
 func stickerIDCallback(ctx *tg.Context) error {
+	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(
+		ctx.User,
+		ctx.Update.Chat().ID,
+		"sticker",
 	); err != nil {
 		return err
 	}
 
-	if err := bot.AnswerCallback(upd, "Homepage", false); err != nil {
+	if err = ctx.Bot.UpdateCallbackQueryMessage(
+		ctx.Update,
+		"",
+		"Send a sticker to me and I'll send it's ID back to you.",
+		nil,
+	); err != nil {
 		return err
 	}
 
-	return nil
+	return ctx.Bot.AnswerCallback(ctx.Update, "Send a sticker to me.", false)
 }
