@@ -6,12 +6,13 @@ import (
 
 type Update struct {
 	*tgbotapi.Update
-	user        *tgbotapi.User
-	chat        *tgbotapi.Chat
-	cmd         string
-	cmdArgs     string
-	cbQuery     string
-	inlineQuery string
+	user    *tgbotapi.User
+	chat    *tgbotapi.Chat
+	cmd     string
+	cmdArgs string
+	cbQuery string
+
+	inlineQuery   string
 	isInlineQuery bool
 }
 

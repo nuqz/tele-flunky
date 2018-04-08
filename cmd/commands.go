@@ -1,14 +1,15 @@
 package main
 
 import (
-	tg "github.com/nuqz/tele-flunky/telegram"
 	"gopkg.in/telegram-bot-api.v4"
+
+	tg "github.com/nuqz/tele-flunky/telegram"
 )
 
 var (
 	StartCommand = "start"
 
-	Greeting = `️Hello, dear ✌ My name is Mr. Flunky and I am the bot. I can do many fun things with my friends:	
+	Greeting = `️Hello, dear ✌ My name is **Mr. Flunky** and I am the bot. I can do many fun things with my friends:	
 🎼 I like to listen music and you can share it with me.
 🎯 I follow the situation at the crypto exchange.
 😎 I'm very cool bot and 💖 u!`
@@ -27,13 +28,9 @@ var (
 
 func NewStartCommand() tg.Handler { return tg.HandlerFunc(startCommand) }
 
-	msg := tgbotapi.NewMessage(upd.Message.Chat.ID, Greeting)
-	msg.ReplyMarkup = startKeyboardMarkup
-	if _, err := bot.Send(msg); err != nil {
 func startCommand(ctx *tg.Context) error {
 		return err
 	}
 
 	return nil
 }
-

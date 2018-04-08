@@ -1,8 +1,9 @@
 package main
 
 import (
-	tg "github.com/nuqz/tele-flunky/telegram"
 	"gopkg.in/telegram-bot-api.v4"
+
+	tg "github.com/nuqz/tele-flunky/telegram"
 )
 
 var (
@@ -12,22 +13,8 @@ var (
 	UnknownCallback   = "unknown"
 	ComeBackMessage = "I hope to see you again!"
 
-	x                  = "xs"
 	homeKeyboardMarkup = tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{Text: "Catalog", CallbackData: &x},
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{Text: "Search", CallbackData: &x},
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{Text: "About", CallbackData: &x},
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{Text: "Contacts", CallbackData: &x},
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.InlineKeyboardButton{Text: "Delivery", CallbackData: &x},
 			tgbotapi.InlineKeyboardButton{
 				Text:         "I want to know Sticker ID",
 				CallbackData: &StickerIDCallback,
@@ -56,6 +43,8 @@ func aloneCallback(ctx *tg.Context) error {
 }
 
 func homeCallback(ctx *tg.Context) error {
+}
+
 func stickerIDCallback(ctx *tg.Context) error {
 	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(
 		ctx.User,
