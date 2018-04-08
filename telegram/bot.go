@@ -338,3 +338,12 @@ func (bot *Bot) SendMessage(
 	_, err := bot.Send(msg)
 	return err
 }
+
+func (bot *Bot) SendSticker(ctx *Context, stickerID string) error {
+	sticker := tgbotapi.NewStickerShare(
+		ctx.Update.Chat().ID,
+		StickerCriminalRaccoonHat,
+	)
+	_, err := bot.Send(sticker)
+	return err
+}

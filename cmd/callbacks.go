@@ -38,12 +38,7 @@ func aloneCallback(ctx *tg.Context) error {
 		}
 	}
 
-	sticker := tgbotapi.NewStickerShare(
-		ctx.Update.Chat().ID,
-		tg.StickerMinecraftForeverAlone,
-	)
-	_, err = ctx.Bot.Send(sticker)
-	return err
+	return ctx.Bot.SendSticker(ctx, tg.StickerMinecraftForeverAlone)
 }
 
 func NewHomeCallback() tg.Handler { return tg.HandlerFunc(homeCallback) }
@@ -69,11 +64,8 @@ func homeCallback(ctx *tg.Context) error {
 		return ctx.Bot.AnswerCallback(ctx.Update, "Homepage", false)
 	} else if ctx.Update.IsCommand() {
 		// When friends come from /start
-		sticker := tgbotapi.NewStickerShare(
-			ctx.Update.Chat().ID,
-			tg.StickerCriminalRaccoonHat,
-		)
-		if _, err = ctx.Bot.Send(sticker); err != nil {
+		err := ctx.Bot.SendSticker(ctx, tg.StickerCriminalRaccoonHat)
+		if err != nil {
 			return err
 		}
 
