@@ -15,7 +15,11 @@ type User struct {
 }
 
 func NewUser(user *tgbotapi.User) *User {
-	return &User{user, 0, "", Known}
+	role := Guest
+	if user.IsBot {
+		role = Bot
+	}
+	return &User{user, 0, "", role}
 }
 
 func (u *User) StorageKey() []byte {
