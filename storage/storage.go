@@ -13,6 +13,12 @@ type UserStorage interface {
 	DeleteUser(*access.User) error
 }
 
+type UserStateStorage interface {
+	SetUserNextChatMessageHandler(*access.User, int64, string) error
+	GetUserNextChatMessageHandler(*access.User, int64) (string, error)
+}
+
 type BotStorage interface {
 	UserStorage
+	UserStateStorage
 }

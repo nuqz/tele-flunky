@@ -67,3 +67,33 @@ func (db *LevelDB) GetUser(user *tgbotapi.User) (*access.User, error) {
 func (db *LevelDB) DeleteUser(user *access.User) error {
 	return db.Delete(user.StorageKey(), nil)
 }
+
+func (db *LevelDB) SetUserNextChatMessageHandler(
+	user *access.User,
+	chatID int64,
+	handlerName string,
+) error {
+	return db.Put(
+		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chatID)),
+		[]byte(handlerName),
+		nil,
+	)
+}
+
+func (db *LevelDB) GetUserNextChatMessageHandler(
+	user *access.User,
+	chatID int64,
+) (string, error) {
+	bs, err := db.Get(
+		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chatID)),
+		nil,
+	)
+
+	if err == leveldb.ErrNotFound {
+		return "", nil
+	} else if err != nil {
+		return "", err
+	}
+
+	return string(bs), nil
+}
