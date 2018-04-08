@@ -45,6 +45,7 @@ func aloneCallback(ctx *tg.Context) error {
 	return err
 }
 
+func NewHomeCallback() tg.Handler { return tg.HandlerFunc(homeCallback) }
 func homeCallback(ctx *tg.Context) error {
 	if ctx.Update.IsCallbackQuery() {
 		// When new user come from Let's be friends
