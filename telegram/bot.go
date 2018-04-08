@@ -1,12 +1,14 @@
 package telegram
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
 	"os"
 	"runtime"
 
+	"github.com/nuqz/tele-flunky/access"
 	"github.com/nuqz/tele-flunky/storage"
 	"gopkg.in/telegram-bot-api.v4"
 )
@@ -161,17 +163,19 @@ func (bot *Bot) InlineQuery(query string, h Handler)  { bot.inlineQueries[query]
 func (bot *Bot) Message(msg string, h Handler)        { bot.messages[msg] = h }
 
 func (bot *Bot) DefaultHandler() Handler {
-	return HandlerFunc(func(bot *Bot, upd *Update) error {
-		if h, ok := bot.cmds[upd.Command()]; ok {
-			return h.HandleUpdate(bot, upd)
+	return HandlerFunc(func(ctx *Context) error {
+		var handler Handler
+		if h, ok := bot.cmds[ctx.Update.Command()]; ok {
+			handler = h
+		} else if h, ok := bot.inlineQueries[ctx.Update.InlineQuery()]; ok {
+			handler = h
+		} else if h, ok := bot.cbQueries[ctx.Update.CallbackQuery()]; ok {
+			handler = h
+
 		}
 
-		if h, ok := bot.inlineQueries[upd.InlineQuery()]; ok {
-			return h.HandleUpdate(bot, upd)
-		}
-
-		if h, ok := bot.cbQueries[upd.CallbackQuery()]; ok {
-			return h.HandleUpdate(bot, upd)
+		if handler != nil {
+			return handler.HandleUpdate(ctx)
 		}
 
 		return nil
@@ -189,7 +193,15 @@ func (bot *Bot) Serve(h Handler) {
 				for {
 					select {
 					case upd := <-updates:
-						if err := h.HandleUpdate(bot, upd); err != nil {
+						ctx, err := bot.newContext(upd)
+						if err != nil {
+							log.Println(err)
+							continue
+						}
+
+						log.Println(ctx.Update)
+
+						if err := h.HandleUpdate(ctx); err != nil {
 							log.Println(err)
 						}
 					case <-bot.done:
@@ -255,4 +267,39 @@ func (bot *Bot) UpdateCallbackQueryMessage(
 	}
 
 	return nil
+}
+
+func (bot *Bot) user(upd *Update) (*access.User, error) {
+	tgUser := upd.User()
+
+	var user *access.User
+	if has, err := bot.Storage.HasUser(tgUser); err != nil {
+		return nil, err
+	} else if has {
+		if user, err = bot.Storage.GetUser(tgUser); err != nil {
+			return nil, err
+		}
+	} else {
+		user = access.NewUser(tgUser)
+		user.FromChatID = upd.Update.Message.Chat.ID
+		user.Role = access.Known
+		if err = bot.Storage.PutUser(user); err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
+}
+
+func (bot *Bot) newContext(upd *Update) (*Context, error) {
+	user, err := bot.user(upd)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Context{
+		Context: context.Background(),
+		Bot:     bot,
+		Update:  upd,
+		User:    user,
+	}, nil
 }

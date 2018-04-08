@@ -29,12 +29,14 @@ var (
 	)
 )
 
-func homeCallback(bot *tg.Bot, upd *tg.Update) error {
 	if err = bot.UpdateCallbackQueryMessage(
 		upd,
 		"",
 		"homepage text",
 		&homeKeyboardMarkup,
+func aloneCallback(ctx *tg.Context) error {
+func homeCallback(ctx *tg.Context) error {
+func stickerIDCallback(ctx *tg.Context) error {
 	); err != nil {
 		return err
 	}

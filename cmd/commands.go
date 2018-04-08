@@ -27,10 +27,10 @@ var (
 
 func NewStartCommand() tg.Handler { return tg.HandlerFunc(startCommand) }
 
-func startCommand(bot *tg.Bot, upd *tg.Update) error {
 	msg := tgbotapi.NewMessage(upd.Message.Chat.ID, Greeting)
 	msg.ReplyMarkup = startKeyboardMarkup
 	if _, err := bot.Send(msg); err != nil {
+func startCommand(ctx *tg.Context) error {
 		return err
 	}
 

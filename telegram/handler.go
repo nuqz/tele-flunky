@@ -1,11 +1,23 @@
 package telegram
 
+import (
+	"context"
+
+	"github.com/nuqz/tele-flunky/access"
+)
+
+type Context struct {
+	context.Context
+
+	Bot    *Bot
+	Update *Update
+	User   *access.User
+}
+
 type Handler interface {
-	HandleUpdate(*Bot, *Update) error
+	HandleUpdate(*Context) error
 }
 
-type HandlerFunc func(*Bot, *Update) error
+type HandlerFunc func(*Context) error
 
-func (fn HandlerFunc) HandleUpdate(bot *Bot, upd *Update) error {
-	return fn(bot, upd)
-}
+func (fn HandlerFunc) HandleUpdate(ctx *Context) error { return fn(ctx) }
