@@ -20,7 +20,7 @@ var (
 		}),
 		tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
 			Text:         "Don't bother me 👽",
-			CallbackData: &UnknownCallback,
+			CallbackData: &AloneCallback,
 		}),
 	)
 )

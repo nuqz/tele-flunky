@@ -6,9 +6,11 @@ import (
 )
 
 var (
-	HomeCallback    = "home"
-	UnknownCallback = "unknown"
+	AloneCallback     = "alone"
+	HomeCallback      = "home"
 	StickerIDCallback = "sticker_id"
+	UnknownCallback   = "unknown"
+	ComeBackMessage = "I hope to see you again!"
 
 	x                  = "xs"
 	homeKeyboardMarkup = tgbotapi.NewInlineKeyboardMarkup(
@@ -34,12 +36,25 @@ var (
 	)
 )
 
-	if err = bot.UpdateCallbackQueryMessage(
-		upd,
-		"",
-		"homepage text",
-		&homeKeyboardMarkup,
 func aloneCallback(ctx *tg.Context) error {
+	if ctx.Update.IsCallbackQuery() {
+		if err := ctx.Bot.AnswerCallback(
+			ctx.Update,
+			ComeBackMessage,
+			false,
+		); err != nil {
+			return err
+		}
+	}
+
+	sticker := tgbotapi.NewStickerShare(
+		ctx.Update.Chat().ID,
+		tg.StickerMinecraftForeverAlone,
+	)
+	_, err = ctx.Bot.Send(sticker)
+	return err
+}
+
 func homeCallback(ctx *tg.Context) error {
 func stickerIDCallback(ctx *tg.Context) error {
 	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(
