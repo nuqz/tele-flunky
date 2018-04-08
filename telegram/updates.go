@@ -12,6 +12,7 @@ type Update struct {
 	cmdArgs     string
 	cbQuery     string
 	inlineQuery string
+	isInlineQuery bool
 }
 
 func updateFromMessage(update *Update, msg *tgbotapi.Message) {
@@ -32,6 +33,7 @@ func updateFromCallbackQuery(update *Update, query *tgbotapi.CallbackQuery) {
 func updateFromInlineQuery(update *Update, query *tgbotapi.InlineQuery) {
 	update.user = query.From
 	update.inlineQuery = query.Query
+	update.isInlineQuery = true
 }
 
 func NewUpdate(upd *tgbotapi.Update) (update *Update) {
@@ -62,7 +64,7 @@ func NewUpdate(upd *tgbotapi.Update) (update *Update) {
 
 func (upd *Update) IsCommand() bool       { return upd.cmd != "" }
 func (upd *Update) IsCallbackQuery() bool { return upd.cbQuery != "" }
-func (upd *Update) IsInlineQuery() bool   { return upd.inlineQuery != "" }
+func (upd *Update) IsInlineQuery() bool   { return upd.isInlineQuery }
 func (upd *Update) User() *tgbotapi.User  { return upd.user }
 func (upd *Update) Chat() *tgbotapi.Chat  { return upd.chat }
 func (upd *Update) Command() string       { return upd.cmd }
