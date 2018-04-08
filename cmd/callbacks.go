@@ -77,11 +77,7 @@ func homeCallback(ctx *tg.Context) error {
 			return err
 		}
 
-		msg := tgbotapi.NewMessage(ctx.Update.Chat().ID, HomepageMessage)
-		msg.ReplyMarkup = homeKeyboardMarkup
-		msg.ParseMode = "markdown"
-		_, err = ctx.Bot.Send(msg)
-		return err
+		return ctx.Bot.SendMessage(ctx, HomepageMessage, &homeKeyboardMarkup)
 	}
 
 	return nil

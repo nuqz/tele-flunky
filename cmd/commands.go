@@ -35,10 +35,7 @@ func startCommand(ctx *tg.Context) error {
 			return err
 		}
 
-		msg := tgbotapi.NewMessage(ctx.Update.Chat().ID, Greeting)
-		msg.ReplyMarkup = startKeyboardMarkup
-		_, err = ctx.Bot.Send(msg)
-		return err
+		return ctx.Bot.SendMessage(ctx, Greeting, &startKeyboardMarkup)
 	}
 
 	return homeCallback(ctx)

@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 
-	"gopkg.in/telegram-bot-api.v4"
-
 	tg "github.com/nuqz/tele-flunky/telegram"
 )
 
@@ -20,13 +18,12 @@ func stickerIDMessage(ctx *tg.Context) error {
 	}
 
 	if ctx.Update.Message != nil && ctx.Update.Message.Sticker != nil {
-		msg := tgbotapi.NewMessage(
-			ctx.Update.Chat().ID,
-			fmt.Sprintf("Telegram sticker ID: %s",
-				ctx.Update.Update.Message.Sticker.FileID),
-		)
-		_, err = ctx.Bot.Send(msg)
-		return err
+		if err := ctx.Bot.SendMessage(ctx, fmt.Sprintf(
+			"Telegram sticker ID: %s",
+			ctx.Update.Update.Message.Sticker.FileID,
+		), nil); err != nil {
+			return err
+		}
 	}
 
 	return nil

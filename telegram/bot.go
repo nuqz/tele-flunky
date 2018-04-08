@@ -325,3 +325,16 @@ func (bot *Bot) newContext(upd *Update) (*Context, error) {
 		User:    user,
 	}, nil
 }
+
+func (bot *Bot) SendMessage(
+	ctx *Context,
+	text string,
+	markup *tgbotapi.InlineKeyboardMarkup,
+) error {
+	msg := tgbotapi.NewMessage(ctx.Update.Chat().ID, text)
+	if markup != nil {
+		msg.ReplyMarkup = markup
+	}
+	_, err := bot.Send(msg)
+	return err
+}
