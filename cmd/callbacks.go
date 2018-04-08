@@ -26,6 +26,7 @@ var (
 	)
 )
 
+func NewAloneCallback() tg.Handler { return tg.HandlerFunc(aloneCallback) }
 func aloneCallback(ctx *tg.Context) error {
 	if ctx.Update.IsCallbackQuery() {
 		if err := ctx.Bot.AnswerCallback(
@@ -86,6 +87,7 @@ func homeCallback(ctx *tg.Context) error {
 	return nil
 }
 
+func NewStickerIDCallback() tg.Handler { return tg.HandlerFunc(stickerIDCallback) }
 func stickerIDCallback(ctx *tg.Context) error {
 	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(
 		ctx.User,

@@ -43,9 +43,9 @@ func main() {
 	bot.Command(StartCommand, NewStartCommand())
 
 	bot.CallbackQuery(HomeCallback, NewHomeCallback())
-	bot.CallbackQuery(AloneCallback, tg.HandlerFunc(aloneCallback))
-	bot.CallbackQuery(StickerIDCallback, tg.HandlerFunc(stickerIDCallback))
-	bot.Message(StickerMessage, tg.HandlerFunc(stickerIDMessage))
+	bot.CallbackQuery(AloneCallback, NewAloneCallback())
+	bot.CallbackQuery(StickerIDCallback, NewStickerIDCallback())
+	bot.Message(StickerMessage, NewStickerIDMessage())
 
 	bot.Serve(bot.DefaultHandler())
 

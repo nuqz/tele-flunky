@@ -28,7 +28,6 @@ var (
 )
 
 func NewStartCommand() tg.Handler { return tg.HandlerFunc(startCommand) }
-
 func startCommand(ctx *tg.Context) error {
 	if ctx.User.Role < access.Friend {
 		sticker := tgbotapi.NewStickerShare(ctx.Update.Chat().ID, tg.StickerMinecraftFabulous)
