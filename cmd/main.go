@@ -42,7 +42,7 @@ func init() {
 func main() {
 	bot.Command(StartCommand, NewStartCommand())
 
-	bot.CallbackQuery(HomeCallback, tg.HandlerFunc(homeCallback))
+	bot.CallbackQuery(HomeCallback, NewHomeCallback())
 	bot.CallbackQuery(AloneCallback, tg.HandlerFunc(aloneCallback))
 	bot.CallbackQuery(StickerIDCallback, tg.HandlerFunc(stickerIDCallback))
 	bot.Message(StickerMessage, tg.HandlerFunc(stickerIDMessage))
