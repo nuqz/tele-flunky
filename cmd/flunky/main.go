@@ -47,6 +47,8 @@ func main() {
 	bot.CallbackQuery(StickerIDCallback, NewStickerIDCallback())
 	bot.Message(StickerMessage, NewStickerIDMessage())
 
+	bot.InlineQuery(YobitQuery, tg.HandlerFunc(yobitQuery))
+
 	bot.Serve(bot.DefaultHandler())
 
 	<-quit
