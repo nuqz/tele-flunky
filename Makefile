@@ -5,6 +5,7 @@ TG_BOT_CERT=cert.pem
 TG_BOT_KEY=key.pem
 CERT_SUBJ="/C=SA/ST=South Africa/O=Men in black/CN=mib.space"
 TG_BOT_LEVELDB_PATH=/tmp/flunky
+TG_BOT_PROXY_URL=
 
 
 .PHONY: binary certs
@@ -22,12 +23,14 @@ local: binary
 	TG_BOT_TOKEN=$(TG_BOT_TOKEN) \
 	TG_BOT_SECRET=$(TG_BOT_SECRET) \
 	TG_BOT_LEVELDB_PATH=$(TG_BOT_LEVELDB_PATH) \
+	TG_BOT_PROXY_URL=$(TG_BOT_PROXY_URL) \
 	./tgflunky
 
 debug: binary
 	TG_BOT_TOKEN=$(TG_BOT_TOKEN) \
 	TG_BOT_SECRET=$(TG_BOT_SECRET) \
 	TG_BOT_LEVELDB_PATH=$(TG_BOT_LEVELDB_PATH) \
+	TG_BOT_PROXY_URL=$(TG_BOT_PROXY_URL) \
 	./tgflunky -debug
 
 binary:

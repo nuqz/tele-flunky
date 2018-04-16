@@ -5,20 +5,23 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"runtime"
+	"strings"
 
-	"gopkg.in/telegram-bot-api.v4"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/nuqz/tele-flunky/telegram/access"
 	"github.com/nuqz/tele-flunky/telegram/storage"
 )
 
 const (
-	EnvCert   = "TG_BOT_CERT"
-	EnvDomain = "TG_BOT_DOMAIN"
-	EnvKey    = "TG_BOT_KEY"
-	EnvSecret = "TG_BOT_SECRET"
-	EnvToken  = "TG_BOT_TOKEN"
+	EnvCert     = "TG_BOT_CERT"
+	EnvDomain   = "TG_BOT_DOMAIN"
+	EnvKey      = "TG_BOT_KEY"
+	EnvSecret   = "TG_BOT_SECRET"
+	EnvToken    = "TG_BOT_TOKEN"
+	EnvProxyURL = "TG_BOT_PROXY_URL"
 )
 
 var (
@@ -31,12 +34,13 @@ var (
 )
 
 type BotConfig struct {
-	certPath string
-	debug    bool
-	domain   string
-	keyPath  string
-	secret   string
-	token    string
+	certPath  string
+	debug     bool
+	domain    string
+	keyPath   string
+	secret    string
+	token     string
+	proxy_url string
 }
 
 func ConfigFromEnv() (*BotConfig, error) {
@@ -65,6 +69,7 @@ func ConfigFromEnv() (*BotConfig, error) {
 		}
 	}
 
+	cfg.proxy_url = os.Getenv(EnvProxyURL)
 	return cfg, nil
 }
 
@@ -86,14 +91,28 @@ type Bot struct {
 }
 
 func NewBot(s storage.BotStorage, cfg *BotConfig, debug bool) (*Bot, error) {
-	tgBotAPI, err := tgbotapi.NewBotAPI(cfg.token)
+	var (
+		tgbot *tgbotapi.BotAPI
+		err   error
+	)
+	if cfg.proxy_url != "" {
+		tgbot, err = tgbotapi.NewBotAPIWithClient(cfg.token, &http.Client{
+			Transport: &http.Transport{
+				Proxy: func(*http.Request) (*url.URL, error) {
+					return url.Parse(cfg.proxy_url)
+				},
+			},
+		})
+	} else {
+		tgbot, err = tgbotapi.NewBotAPI(cfg.token)
+	}
 	if err != nil {
 		return nil, err
 	}
-	tgBotAPI.Debug = debug
+	tgbot.Debug = debug
 
 	bot := &Bot{
-		BotAPI: tgBotAPI,
+		BotAPI: tgbot,
 
 		config: cfg,
 
