@@ -188,9 +188,16 @@ func (bot *Bot) DefaultHandler() Handler {
 			handler = h
 		} else if h, ok := bot.inlineQueries[ctx.Update.InlineQuery()]; ok {
 			handler = h
+		} else if ctx.Update.IsInlineQuery() {
+			parts := strings.Split(ctx.Update.InlineQuery(), " ")
+			if len(parts) > 1 {
+				if h, ok := bot.inlineQueries[parts[0]]; ok {
+					handler = h
+				}
+			}
 		} else if h, ok := bot.cbQueries[ctx.Update.CallbackQuery()]; ok {
 			handler = h
-		} else if !ctx.Update.IsInlineQuery() {
+		} else {
 			handlerName, err := bot.getUserNextChatMessageHandler(ctx)
 			if err != nil {
 				return err
