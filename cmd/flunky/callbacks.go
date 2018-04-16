@@ -1,10 +1,10 @@
 package main
 
 import (
-	"gopkg.in/telegram-bot-api.v4"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/nuqz/tele-flunky/access"
 	tg "github.com/nuqz/tele-flunky/telegram"
+	"github.com/nuqz/tele-flunky/telegram/access"
 )
 
 var (

@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/nuqz/tele-flunky/storage"
 	tg "github.com/nuqz/tele-flunky/telegram"
+	"github.com/nuqz/tele-flunky/telegram/storage"
 )
 
 var (

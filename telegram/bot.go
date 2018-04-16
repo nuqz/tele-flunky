@@ -8,9 +8,9 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/nuqz/tele-flunky/access"
-	"github.com/nuqz/tele-flunky/storage"
 	"gopkg.in/telegram-bot-api.v4"
+	"github.com/nuqz/tele-flunky/telegram/access"
+	"github.com/nuqz/tele-flunky/telegram/storage"
 )
 
 const (

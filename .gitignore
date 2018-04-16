@@ -12,8 +12,7 @@
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
-/cmd/tgflunky
-/cmd/cmd
+/cmd/flunky/flunky
 tgflunky
 cert.pem
 key.pem

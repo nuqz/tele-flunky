@@ -31,7 +31,7 @@ debug: binary
 	./tgflunky -debug
 
 binary:
-	go build -o ./tgflunky ./cmd
+	go build -o ./tgflunky ./cmd/flunky
 
 certs:
 	openssl req -newkey rsa:4096 -sha256 -nodes -keyout key.pem -x509 -days 365 -out cert.pem -subj ${CERT_SUBJ}

@@ -3,7 +3,7 @@ package telegram
 import (
 	"context"
 
-	"github.com/nuqz/tele-flunky/access"
+	"github.com/nuqz/tele-flunky/telegram/access"
 )
 
 type Context struct {

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/filter"
 	"github.com/syndtr/goleveldb/leveldb/opt"
-	"gopkg.in/telegram-bot-api.v4"
 
-	"github.com/nuqz/tele-flunky/access"
+	"github.com/nuqz/tele-flunky/telegram/access"
 )
 
 type LevelDB struct {

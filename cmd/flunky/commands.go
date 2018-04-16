@@ -1,14 +1,15 @@
 package main
 
 import (
-	"gopkg.in/telegram-bot-api.v4"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/nuqz/tele-flunky/access"
 	tg "github.com/nuqz/tele-flunky/telegram"
+	"github.com/nuqz/tele-flunky/telegram/access"
 )
 
 var (
 	StartCommand = "start"
+	AdminCommand = "admin"
 
 	Greeting = `️Hello, dear ✌ My name is **Mr. Flunky** and I am the bot. I can do many fun things with my friends:	
 🎼 I like to listen music and you can share it with me.
