@@ -330,7 +330,12 @@ func (bot *Bot) user(upd *Update) (*access.User, error) {
 	} else {
 		user = access.NewUser(tgUser)
 		user.FromChatID = upd.Update.Message.Chat.ID
+
 		user.Role = access.Known
+		if user.IsBot {
+			user.Role = access.Bot
+		}
+
 		if err = bot.Storage.PutUser(user); err != nil {
 			return nil, err
 		}
