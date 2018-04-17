@@ -25,3 +25,6 @@ func NewUser(user *tgbotapi.User) *User {
 func (u *User) StorageKey() []byte {
 	return []byte(fmt.Sprintf("user_%d", u.ID))
 }
+
+func (u *User) IsAdmin() bool  { return u.Role == Admin }
+func (u *User) IsBanned() bool { return u.Role == Banned }

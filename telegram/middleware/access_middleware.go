@@ -11,9 +11,9 @@ var ErrAccessDenied = errors.New("Access denied")
 
 func AllowTo(h tg.Handler, roles ...access.Role) tg.Handler {
 	return tg.HandlerFunc(func(ctx *tg.Context) error {
-		if ctx.User.Role == access.Admin {
+		if ctx.User.IsAdmin() {
 			return h.HandleUpdate(ctx)
-		} else if ctx.User.Role == access.Banned {
+		} else if ctx.User.IsBanned() {
 			return ErrAccessDenied
 		}
 
@@ -27,3 +27,18 @@ func AllowTo(h tg.Handler, roles ...access.Role) tg.Handler {
 	})
 }
 
+func AllowAbove(h tg.Handler, role access.Role) tg.Handler {
+	return tg.HandlerFunc(func(ctx *tg.Context) error {
+		if ctx.User.IsAdmin() {
+			return h.HandleUpdate(ctx)
+		} else if ctx.User.IsBanned() {
+			return ErrAccessDenied
+		}
+
+		if ctx.User.Role = role {
+			return h.HandleUpdate(ctx)
+		}
+
+		return ErrAccessDenied
+	})
+}
