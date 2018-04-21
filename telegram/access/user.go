@@ -1,7 +1,7 @@
 package access
 
 import (
-	"fmt"
+	"encoding/json"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -22,8 +22,14 @@ func NewUser(user *tgbotapi.User) *User {
 	return &User{user, 0, "", role}
 }
 
-func (u *User) StorageKey() []byte {
-	return []byte(fmt.Sprintf("user_%d", u.ID))
+func NewUserFromJSON(data []byte) (*User, error) {
+	u := new(User)
+	if err := json.Unmarshal(data, u); err != nil {
+		return nil, err
+	}
+
+	return u, nil
+
 }
 
 func (u *User) IsAdmin() bool  { return u.Role == Admin }

@@ -39,7 +39,7 @@ func (db *LevelDB) PutUser(user *access.User) error {
 		return err
 	}
 
-	if err = db.Put(user.StorageKey(), value, nil); err != nil {
+	if err = db.Put([]byte(fmt.Sprintf("user_%d", user.ID)), value, nil); err != nil {
 		return err
 	}
 
@@ -56,25 +56,20 @@ func (db *LevelDB) GetUser(user *tgbotapi.User) (*access.User, error) {
 		return nil, err
 	}
 
-	u := new(access.User)
-	if err := json.Unmarshal(userBs, u); err != nil {
-		return nil, err
-	}
-
-	return u, nil
+	return access.NewUserFromJSON(userBs)
 }
 
 func (db *LevelDB) DeleteUser(user *access.User) error {
-	return db.Delete(user.StorageKey(), nil)
+	return db.Delete([]byte(fmt.Sprintf("user_%d", user.ID)), nil)
 }
 
 func (db *LevelDB) SetUserNextChatMessageHandler(
 	user *access.User,
-	chatID int64,
+	chat *tgbotapi.Chat,
 	handlerName string,
 ) error {
 	return db.Put(
-		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chatID)),
+		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chat.ID)),
 		[]byte(handlerName),
 		nil,
 	)
@@ -82,10 +77,10 @@ func (db *LevelDB) SetUserNextChatMessageHandler(
 
 func (db *LevelDB) GetUserNextChatMessageHandler(
 	user *access.User,
-	chatID int64,
+	chat *tgbotapi.Chat,
 ) (string, error) {
 	bs, err := db.Get(
-		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chatID)),
+		[]byte(fmt.Sprintf("user_%d_chat_%d_message_handler", user.ID, chat.ID)),
 		nil,
 	)
 

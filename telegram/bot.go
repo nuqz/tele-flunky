@@ -307,7 +307,7 @@ func (bot *Bot) getUserNextChatMessageHandler(ctx *Context) (string, error) {
 	log.Printf("%+v", ctx.Update)
 	handlerName, err := bot.Storage.GetUserNextChatMessageHandler(
 		ctx.User,
-		ctx.Update.Chat().ID,
+		ctx.Update.Chat(),
 	)
 
 	if err != nil {

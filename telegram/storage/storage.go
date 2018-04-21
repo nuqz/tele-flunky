@@ -14,8 +14,8 @@ type UserStorage interface {
 }
 
 type UserStateStorage interface {
-	SetUserNextChatMessageHandler(*access.User, int64, string) error
-	GetUserNextChatMessageHandler(*access.User, int64) (string, error)
+	SetUserNextChatMessageHandler(*access.User, *tgbotapi.Chat, string) error
+	GetUserNextChatMessageHandler(*access.User, *tgbotapi.Chat) (string, error)
 }
 
 type BotStorage interface {
