@@ -13,7 +13,7 @@ var (
 func NewStickerIDMessage() tg.Handler { return tg.HandlerFunc(stickerIDMessage) }
 func stickerIDMessage(ctx *tg.Context) error {
 	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(ctx.User,
-		ctx.Update.Chat().ID, ""); err != nil {
+		ctx.Update.Chat(), ""); err != nil {
 		return err
 	}
 

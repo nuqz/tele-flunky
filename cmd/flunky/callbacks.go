@@ -79,7 +79,7 @@ func NewStickerIDCallback() tg.Handler { return tg.HandlerFunc(stickerIDCallback
 func stickerIDCallback(ctx *tg.Context) error {
 	if err := ctx.Bot.Storage.SetUserNextChatMessageHandler(
 		ctx.User,
-		ctx.Update.Chat().ID,
+		ctx.Update.Chat(),
 		"sticker",
 	); err != nil {
 		return err
