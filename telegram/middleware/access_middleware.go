@@ -29,14 +29,10 @@ func AllowTo(h tg.Handler, roles ...access.Role) tg.Handler {
 
 func AllowAbove(h tg.Handler, role access.Role) tg.Handler {
 	return tg.HandlerFunc(func(ctx *tg.Context) error {
-		if ctx.User.IsAdmin() {
+		if ctx.User.IsAdmin() || ctx.User.Role == role {
 			return h.HandleUpdate(ctx)
 		} else if ctx.User.IsBanned() {
 			return ErrAccessDenied
-		}
-
-		if ctx.User.Role = role {
-			return h.HandleUpdate(ctx)
 		}
 
 		return ErrAccessDenied
